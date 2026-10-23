@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- API 27+ 才支持这两个属性；低版本(24-26)会自动忽略未知属性，安全。
+         注意：同名 style 在不同限定符下是「替换」而非「合并」，
+         因此这里继承 AppTheme.Base 而不是重新声明全部属性 -->
+
+    <!-- 导航栏背景已改为浅色 #F5F5F7，按钮图标需相应改为深色，否则浅底浅图标不可见 -->
+    <style name="AppTheme" parent="@style/AppTheme.Base">
+        <item name="android:windowLightNavigationBar">true</item>
+        <!-- API 29+ 生效：关闭系统 Force Dark。
+             Android 10-12 在「系统深色模式 + 浅色 App 主题」时会自动把 WebView 内容算法变暗，
+             与本应用的 iOS 浅色 UI 冲突（CSS 的 color-scheme: only light 是第二道防线） -->
+        <item name="android:forceDarkAllowed">false</item>
+    </style>
+</resources>

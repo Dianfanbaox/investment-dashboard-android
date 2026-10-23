@@ -1,0 +1,44 @@
+pluginManagement {
+    repositories {
+        mavenCentral()
+        google()
+        gradlePluginPortal()
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/central' }
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositories {
+        mavenCentral()
+        google()
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/central' }
+    }
+}
+rootProject.name = 'investdash'
+include ':app'
+include ':capacitor'
+project(':capacitor').projectDir = new File('./capacitor')
+include ':local-notifications'
+project(':local-notifications').projectDir = new File('./local-notifications')
+include ':status-bar'
+project(':status-bar').projectDir = new File('./status-bar')
+include ':haptics'
+project(':haptics').projectDir = new File('./haptics')
+/* @capacitor/app：提供 backButton 监听（返回键接管）与 exitApp。
+ * 与其它插件一致采用「拷贝进 android/ + 手写 include」的方式接入 ——
+ * 本工程的 settings.gradle 是手写维护的，并没有 apply Capacitor 自动生成的
+ * capacitor.settings.gradle，所以 cap sync 新增的插件不会自动进入编译。 */
+include ':capacitor-app'
+project(':capacitor-app').projectDir = new File('./capacitor-app')
+/* Share / Filesystem：真机导出需要（写缓存文件 + 调系统分享面板）。
+ * 与其它插件一致采用「拷贝进 android/ + 手写 include」方式接入。 */
+include ':share'
+project(':share').projectDir = new File('./share')
+include ':filesystem'
+project(':filesystem').projectDir = new File('./filesystem')
+include ':capacitor-android-plugins'
+project(':capacitor-android-plugins').projectDir = new File('./capacitor-android-plugins')

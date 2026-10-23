@@ -1,0 +1,50 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+.env
+.env.*
+*.keystore
+*.jks
+*.apk
+**/local.properties
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# APP 生成内容与本机构建环境
+投资看板-app-prototype/www/
+投资看板-app-prototype/android/**/build/
+投资看板-app-prototype/android/.gradle/
+投资看板-app-prototype/android/app/src/main/assets/public/
+投资看板-app-prototype/.playwright-cli/
+.android-sdk/
+.jdk21/
+.gradle_home/
+.trae/
+.workbuddy/
+
+# 本机产物、探索副本与 Android 本地配置
+投资看板-v*.apk
+投资看板-app-prototype/投资看板-v*.apk
+投资看板-app-ui-v2/
+投资看板-app-prototype/android/local.properties
+投资看板-app-prototype/android/debug.keystore
+投资看板-app-prototype/android/.idea/

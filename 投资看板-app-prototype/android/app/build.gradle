@@ -1,0 +1,125 @@
+apply plugin: 'com.android.application'
+
+android {
+    namespace 'com.acidinvert.investdash'
+    compileSdk rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        applicationId "com.acidinvert.investdash"
+        minSdk rootProject.ext.minSdkVersion
+        targetSdk rootProject.ext.targetSdkVersion
+        versionCode 271
+        versionName "1.0.271"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        debug {
+            // 自签 debug keystore（项目 android/ 根目录）
+            storeFile file(rootDir.path + "/debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            debuggable true
+            signingConfig signingConfigs.debug
+        }
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    // Web assets 来源：src/main/assets/public（我们已手动同步）+ 构建前再同步一次
+    sourceSets {
+        main {
+            assets.srcDirs = ['src/main/assets']
+        }
+    }
+}
+
+dependencies {
+    implementation project(':capacitor')
+    implementation project(':local-notifications')
+    implementation project(':status-bar')
+    implementation project(':haptics')
+    implementation project(':capacitor-app')
+    implementation project(':share')
+    implementation project(':filesystem')
+    implementation "androidx.appcompat:appcompat:1.6.1"
+    implementation "androidx.activity:activity:1.8.0"
+    implementation "androidx.core:core-ktx:1.12.0"
+    implementation "androidx.webkit:webkit:1.9.0"
+    implementation "androidx.core:core-splashscreen:1.0.1"
+}
+
+/* ---- 构建前把最新 Web 文件同步到 src/main/assets/public ----
+ * 来源必须是 www/，与 capacitor.config.ts 的 webDir 保持一致。
+ *
+ * 原实现把来源指向项目根目录，与 Capacitor 自己的 copy 任务（webDir=www）
+ * 写同一个目标目录 —— 两个来源并存，谁最后执行谁生效，构建结果不可预测：
+ * 根目录和 www 一旦分叉（历史上发生过），APK 里装的是哪一份全凭任务顺序。
+ * 统一成 www 后，两者同源、幂等，且「APK 只认 www」这条约定成立。 */
+def webRoot = file("$projectDir/../../www")
+def assetsPublic = file("$projectDir/src/main/assets/public")
+tasks.register('syncWebAssets', Copy) {
+    from(webRoot) {
+        include 'index.html'
+        include 'styles.css'
+        include 'mock.js'
+        include 'market.js'
+        include 'fifo.js'
+        include 'discipline.js'
+        include 'app.js'
+        include 'sw.js'
+        include 'manifest.webmanifest'
+        include 'lib/**'
+        include 'assets/**'
+        exclude 'node_modules/**'
+        exclude 'android/**'
+        exclude 'package.json'
+        exclude 'capacitor.config.ts'
+        exclude '*.cjs'
+        exclude '*.md'
+        exclude '*.log'
+    }
+    into assetsPublic
+    includeEmptyDirs = false
+}
+// preBuild 前先同步
+afterEvaluate {
+    tasks.named('preBuild').configure { it.dependsOn('syncWebAssets') }
+}
+
+// 检查关键文件存在 + 源码与 www 是否同步（忘同步会静默打出旧包）
+def verOf = { File f ->
+    if (!f.exists()) return 'missing'
+    def m = f.text =~ /\?v=(\d+)/
+    return m.find() ? m.group(1) : 'unknown'
+}
+tasks.register('verifyAssets') {
+    doLast {
+        def idx = file("$assetsPublic/index.html")
+        if (!idx.exists()) throw new GradleException("Web assets missing: run syncWebAssets first")
+        def srcV = verOf(file("$projectDir/../../index.html"))
+        def wwwV = verOf(file("$webRoot/index.html"))
+        if (srcV != wwwV) {
+            println "⚠️  源码 index.html 版本 v=${srcV}，www 仍是 v=${wwwV} —— 忘记把源码同步到 www，本次打包的是旧版本！"
+        }
+        println "✅ assets OK（来源 www，版本 v=${wwwV}）"
+    }
+}
+afterEvaluate {
+    tasks.named('syncWebAssets').configure { it.finalizedBy('verifyAssets') }
+}

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 固定浅色主题：WebView 内为 iOS 浅色 UI 且无深色适配，
+         若用 DayNight 会导致开深色模式时原生层（对话框/导航栏）变深而网页恒亮，产生割裂。
+         拆出 Base 是为了让 values-v27 能只覆盖导航栏图标色而不重复全部属性 -->
+    <style name="AppTheme.Base" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="android:statusBarColor">#F5F5F7</item>
+        <item name="android:navigationBarColor">#F5F5F7</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowBackground">#F5F5F7</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+    </style>
+
+    <style name="AppTheme" parent="@style/AppTheme.Base" />
+
+    <!-- 系统冷启动屏：与 WebView 内开屏动效同色同 logo，实现无缝衔接 -->
+    <style name="AppTheme.NoActionBarLaunch" parent="@style/AppTheme">
+        <item name="android:windowSplashScreenBackground">#F5F5F7</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>
+        <item name="android:windowBackground">#F5F5F7</item>
+    </style>
+</resources>
