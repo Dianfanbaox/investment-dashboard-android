@@ -25,6 +25,10 @@ A 股和港股按北京时间的当日交易计算，收盘后保留结果。美
 
 项目使用 Capacitor 6 构建 Android APP，界面和业务逻辑使用 HTML、CSS、JavaScript。当前版本为 **v271**，对应 Android 版本号 **1.0.271**。
 
+## 安装包
+
+[下载 v271 Android APK](https://github.com/Dianfanbaox/investment-dashboard-android/releases/download/v271/investment-dashboard-v271.apk)。安装包使用 Android 调试签名，不包含个人账本数据或 API Key。
+
 ## 目录
 
 - 投资看板-app-prototype/：唯一 APP 工程。
